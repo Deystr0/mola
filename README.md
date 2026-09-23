@@ -1,4 +1,4 @@
-# Local LLM Optimizer
+# MOLA - Local LLM Optimizer
 
 Local LLM Optimizer is a private, local-first gateway placed between an application and an LLM
 provider. It forwards OpenAI, Anthropic, OpenRouter, and Ollama requests, records metadata-only usage locally, and can
