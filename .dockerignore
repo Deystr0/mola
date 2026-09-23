@@ -1,0 +1,14 @@
+.git
+.env
+.venv
+venv
+__pycache__
+*.pyc
+*.db*
+.pytest_cache
+.ruff_cache
+build
+dist
+tests
+benchmarks
+Codex Project Handoff — Local LLM Cost Optimizer.md

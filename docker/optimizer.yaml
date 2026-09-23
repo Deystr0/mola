@@ -1,0 +1,68 @@
+server:
+  host: 0.0.0.0
+  port: 4000
+
+providers:
+  openai:
+    base_url: https://api.openai.com/v1
+    api_key_env: OPENAI_API_KEY
+    timeout_seconds: 120
+  anthropic:
+    base_url: https://api.anthropic.com/v1
+    api_key_env: ANTHROPIC_API_KEY
+    timeout_seconds: 120
+  openrouter:
+    base_url: https://openrouter.ai/api/v1
+    api_key_env: OPENROUTER_API_KEY
+    timeout_seconds: 120
+  ollama:
+    base_url: http://host.docker.internal:11434/v1
+    api_key_env: OLLAMA_API_KEY
+    timeout_seconds: 120
+    allow_private_network: true
+    allow_insecure_http: true
+
+telemetry:
+  enabled: true
+  database_path: /data/telemetry.db
+
+optimization:
+  cache:
+    exact:
+      enabled: false
+      database_path: /data/cache.db
+      ttl_seconds: 3600
+    semantic:
+      enabled: false
+      database_path: /data/semantic-cache.db
+      ttl_seconds: 900
+      similarity_threshold: 0.75
+      max_candidates: 200
+      embedding_dimensions: 1024
+  routing:
+    enabled: false
+  validation:
+    enabled: false
+    escalation:
+      enabled: false
+      max_attempts: 3
+
+security:
+  remote_auth:
+    enabled: true
+    api_key_env: OPTIMIZER_API_KEY
+    allow_health_unauthenticated: true
+    trusted_proxy_ips: []
+  rate_limit:
+    enabled: true
+    requests_per_minute: 60
+    burst: 10
+    authentication_requests_per_minute: 30
+    authentication_burst: 5
+  limits:
+    max_request_bytes: 10485760
+    max_concurrent_requests: 100
+    concurrency_wait_seconds: 0.25
+
+logging:
+  level: INFO

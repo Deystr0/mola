@@ -1,0 +1,67 @@
+[build-system]
+requires = ["flit_core==3.12.0"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "local-llm-optimizer"
+version = "0.11.0"
+description = "A private, local-first optimization gateway for LLM providers."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [{ name = "Local LLM Optimizer contributors" }]
+keywords = ["llm", "gateway", "cost-optimization", "openai", "anthropic"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Framework :: FastAPI",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+  "fastapi>=0.115,<1",
+  "httpx>=0.27,<1",
+  "pydantic>=2.9,<3",
+  "PyYAML>=6.0,<7",
+  "uvicorn>=0.30,<1",
+]
+
+[project.urls]
+Homepage = "https://github.com/Deystr0/mola"
+Repository = "https://github.com/Deystr0/mola"
+Issues = "https://github.com/Deystr0/mola/issues"
+Changelog = "https://github.com/Deystr0/mola/blob/main/CHANGELOG.md"
+Security = "https://github.com/Deystr0/mola/blob/main/SECURITY.md"
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3,<9",
+  "pytest-asyncio>=1.2,<2",
+  "ruff>=0.8,<1",
+]
+
+[project.scripts]
+optimizer = "optimizer.cli.main:main"
+
+[tool.flit.module]
+name = "optimizer"
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]

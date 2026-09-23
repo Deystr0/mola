@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.coverage
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+build/
+dist/
+.env
+*.local.yaml
+*.local.yml
+*.db
+*.db-shm
+*.db-wal
+Codex Project Handoff — Local LLM Cost Optimizer.md

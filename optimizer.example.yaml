@@ -1,0 +1,158 @@
+server:
+  host: 127.0.0.1
+  port: 4000
+
+providers:
+  openai:
+    base_url: https://api.openai.com/v1
+    api_key_env: OPENAI_API_KEY
+    timeout_seconds: 120
+  anthropic:
+    base_url: https://api.anthropic.com/v1
+    api_key_env: ANTHROPIC_API_KEY
+    timeout_seconds: 120
+  openrouter:
+    base_url: https://openrouter.ai/api/v1
+    api_key_env: OPENROUTER_API_KEY
+    timeout_seconds: 120
+  ollama:
+    base_url: http://127.0.0.1:11434/v1
+    api_key_env: OLLAMA_API_KEY
+    timeout_seconds: 120
+    allow_private_network: true
+    allow_insecure_http: true
+
+telemetry:
+  enabled: true
+  database_path: ~/.local/share/llm-optimizer/telemetry.db
+
+# Prices are USD per one million tokens. Unknown models remain unpriced rather
+# than receiving a guessed cost. Add the models you actually use.
+pricing:
+  models: {}
+
+optimization:
+  input:
+    deduplicate_messages: false
+    deduplicate_content_blocks: false
+    deduplicate_tool_outputs: false
+    normalize_tool_output_line_endings: false
+    # Audit-only unless V0.11 context intelligence is explicitly enabled.
+    max_estimated_tokens: null
+    context:
+      # Requires max_estimated_tokens. Prunes only complete historical turns.
+      enabled: false
+      # Always retain at least this many newest historical turns.
+      min_recent_turns: 2
+      # Higher values permit more consequential chunks to be removed.
+      max_prunable_score: 0.35
+  output:
+    enabled: false
+    # Used only when a request does not send x-optimizer-output-policy.
+    default_policy: null
+    # Use max_tokens for older OpenAI-compatible providers when required.
+    openai_parameter: max_completion_tokens
+    policies:
+      machine_to_machine: {max_tokens: null}
+      tool_call: {max_tokens: null}
+      code: {max_tokens: null}
+      analysis: {max_tokens: null}
+      user_answer: {max_tokens: null}
+      documentation: {max_tokens: null}
+  cache:
+    exact:
+      # Enabling this stores provider response bodies locally until expiry.
+      enabled: false
+      database_path: ~/.local/share/llm-optimizer/cache.db
+      ttl_seconds: 3600
+    semantic:
+      # Uses local CPU embeddings. No embedding API or model download is required.
+      enabled: false
+      database_path: ~/.local/share/llm-optimizer/semantic-cache.db
+      ttl_seconds: 900
+      similarity_threshold: 0.75
+      max_candidates: 200
+      embedding_dimensions: 1024
+  compression:
+    tool_output:
+      # Applies only to recognized command outputs embedded in provider requests.
+      enabled: false
+      # Select lite, full, or ultra. Ultra is the default.
+      mode: ultra
+      # Smaller tool results pass through unchanged.
+      min_characters: 2000
+  routing:
+    # Deterministic model routing is opt-in and never invents provider model names.
+    enabled: false
+    default_route: mid
+    cheap_max_estimated_tokens: 600
+    frontier_min_estimated_tokens: 8000
+    frontier_min_messages: 20
+    models:
+      openai:
+        local: null
+        tool: null
+        cheap: null
+        mid: null
+        frontier: null
+      anthropic:
+        local: null
+        tool: null
+        cheap: null
+        mid: null
+        frontier: null
+      openrouter:
+        local: null
+        tool: null
+        cheap: null
+        mid: null
+        frontier: null
+      ollama:
+        local: null
+        tool: null
+        cheap: null
+        mid: null
+        frontier: null
+    decision_model:
+      # Optional V0.9 shadow or V0.10 evidence-gated active classifier.
+      enabled: false
+      mode: shadow
+      artifact_path: null
+      min_confidence: 0.80
+      min_validation_samples: 100
+      min_validation_accuracy: 0.80
+  validation:
+    # Deterministic response checks; no LLM judge or external call.
+    enabled: false
+    require_non_empty: true
+    reject_truncated: true
+    reject_refusal: true
+    validate_json_mode: true
+    escalation:
+      # Requires routing and cheap/mid/frontier model mappings.
+      enabled: false
+      max_attempts: 3
+
+security:
+  remote_auth:
+    # Required whenever server.host is not loopback.
+    enabled: false
+    api_key_env: OPTIMIZER_API_KEY
+    allow_health_unauthenticated: true
+    # Only set exact reverse-proxy peer IPs when the proxy overwrites X-Optimizer-Client-IP.
+    trusted_proxy_ips: []
+  rate_limit:
+    # Per-process token bucket keyed by gateway API key or client address.
+    enabled: false
+    requests_per_minute: 60
+    burst: 10
+    # Always applied per direct client address when remote authentication is enabled.
+    authentication_requests_per_minute: 30
+    authentication_burst: 5
+  limits:
+    max_request_bytes: 10485760
+    max_concurrent_requests: 100
+    concurrency_wait_seconds: 0.25
+
+logging:
+  level: INFO
